@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #3a271e;
+  background: #f9f7f4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(233, 215, 215, 0.8), transparent 34rem),
+    radial-gradient(circle at bottom right, rgba(203, 211, 184, 0.76), transparent 30rem),
+    #f9f7f4;
+}
+
+::selection {
+  background: #e6a94a;
+  color: #3a271e;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+.petluma-noise {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.36) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.32) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
