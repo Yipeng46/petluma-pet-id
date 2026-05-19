@@ -1,46 +1,61 @@
-import { KingdomGateEmblem } from "@/components/kingdom-gate-emblem";
+/* eslint-disable @next/next/no-img-element */
 
 type PassportCoverProps = {
   passportNo: string;
 };
 
+const EMBLEM_ART_SRC = "/petluma-kingdom-gate-emblem.png";
+
 export function PassportCover({ passportNo }: PassportCoverProps) {
   return (
     <section
       aria-label="PetLuma Passport cover"
-      className="passport-cover relative flex aspect-[88/125] h-full min-h-[280px] w-full flex-col overflow-hidden rounded-[1.05rem] border border-[#1a2840]/90 lg:rounded-r-none lg:border-r-0"
+      className="passport-cover relative aspect-[88/125] h-full min-h-[300px] w-full overflow-hidden rounded-[1.05rem] border border-[#1a2840]/90 [container-type:size] lg:rounded-r-none lg:border-r-0"
     >
       <div className="passport-cover-leather pointer-events-none absolute inset-0" />
       <div className="passport-cover-grain pointer-events-none absolute inset-0" />
       <div className="passport-cover-vignette pointer-events-none absolute inset-0" />
       <div className="passport-cover-spine pointer-events-none absolute inset-y-0 left-0 w-[3px]" />
 
-      <div className="relative z-10 flex h-full flex-col px-7 pb-8 pt-9 sm:px-8 sm:pb-9 sm:pt-10">
-        <header className="shrink-0 text-center">
+      <div className="passport-cover-inner relative z-10 flex h-full flex-col items-center text-center">
+        <header className="passport-cover-top shrink-0">
           <p className="passport-cover-gold passport-cover-kingdom">
             PetLuma Kingdom
           </p>
+
+          <div className="passport-cover-heading">
+            <h2 className="passport-cover-gold passport-cover-brand">PetLuma</h2>
+            <p className="passport-cover-gold passport-cover-passport">Passport</p>
+          </div>
         </header>
 
-        <div className="passport-cover-titles shrink-0 pt-5 text-center sm:pt-6">
-          <h2 className="passport-cover-gold passport-cover-brand">PetLuma</h2>
-          <p className="passport-cover-gold passport-cover-passport mt-2">
-            Passport
-          </p>
+        <div
+          className="passport-cover-emblem-stage"
+          role="img"
+          aria-label="PetLuma Kingdom Gate emblem"
+        >
+          <div className="passport-emblem-foil">
+            <div className="passport-cover-emblem-crop">
+              <img
+                src={EMBLEM_ART_SRC}
+                alt=""
+                width={440}
+                height={600}
+                className="passport-cover-emblem-photo"
+                draggable={false}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="passport-cover-emblem relative flex min-h-0 flex-1 items-center justify-center py-4 sm:py-5">
-          <KingdomGateEmblem className="passport-cover-emblem__art h-full w-full max-h-[min(58vw,20rem)] max-w-[min(88%,17.5rem)] text-[#c9a227]" />
-        </div>
-
-        <footer className="shrink-0 text-center">
+        <footer className="passport-cover-bottom shrink-0">
           <p className="passport-cover-gold passport-cover-footer">
             Official Companion Document
           </p>
           {passportNo ? (
-            <p className="passport-cover-number mt-3">{passportNo}</p>
+            <p className="passport-cover-number">{passportNo}</p>
           ) : null}
-          <div className="mt-5 flex justify-center">
+          <div className="passport-cover-chip-wrap">
             <PassportChipIcon />
           </div>
         </footer>
@@ -53,7 +68,7 @@ function PassportChipIcon() {
   return (
     <svg
       viewBox="0 0 48 36"
-      className="passport-cover-chip h-6 w-8"
+      className="passport-cover-chip"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
