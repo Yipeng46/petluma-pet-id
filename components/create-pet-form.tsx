@@ -3,7 +3,7 @@
 import { ImagePlus } from "lucide-react";
 import { type ChangeEvent, useEffect, useState } from "react";
 import { PetIdCard } from "@/components/pet-id-card";
-import { personalities, randomPetPhrase } from "@/lib/pet-options";
+import { PrimaryButton } from "@/components/primary-button";
 import type { Pet } from "@/lib/types";
 
 const maxPhotoSize = 6 * 1024 * 1024;
@@ -27,27 +27,22 @@ function generatePetLumaId() {
 export function CreatePetForm() {
   const [photoName, setPhotoName] = useState("");
   const [error, setError] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const [pet, setPet] = useState<Pet>({
     id: "local-preview",
     petluma_id: "PL-2026-0001",
     pet_name: "",
     breed: "",
-    birthday: "",
-    personality: "Playful",
-    favorite_snack: "",
     photo_url: "",
     photo_path: "",
-    pet_phrase: "I had a good day. I think I deserve extra treats.",
     created_at: "2026-01-01T00:00:00.000Z",
   });
-  const [maxBirthday, setMaxBirthday] = useState("2026-12-31");
 
   useEffect(() => {
-    setMaxBirthday(new Date().toISOString().slice(0, 10));
     setPet((current) => ({
       ...current,
       petluma_id: generatePetLumaId(),
-      pet_phrase: randomPetPhrase(),
       created_at: new Date().toISOString(),
     }));
   }, []);
@@ -95,22 +90,96 @@ export function CreatePetForm() {
     }
   }
 
+  async function handleSave() {
+    setError("");
+    setSaveMessage("");
+
+    if (!pet.pet_name.trim()) {
+      setError("Please add your pet's name before saving.");
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      console.log("[PetLuma] Create Card clicked", {
+        pet_name: pet.pet_name,
+        breed: pet.breed,
+        hasPhotoUrl: Boolean(pet.photo_url),
+      });
+
+      const response = await fetch("/api/pets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          pet_name: pet.pet_name,
+          breed: pet.breed,
+          photo_url: pet.photo_url,
+        }),
+      });
+
+      const data = await response.json();
+
+      console.log("[PetLuma] /api/pets response", {
+        status: response.status,
+        ok: response.ok,
+        data,
+      });
+
+      if (!response.ok) {
+        console.error("[PetLuma] /api/pets failed", data);
+        throw new Error(data?.error || "Could not save this pet.");
+      }
+
+      console.log("[PetLuma] saved pet", data.pet);
+
+      setPet({
+        id: data.pet.id,
+        petluma_id: data.pet.petluma_id,
+        pet_name: data.pet.pet_name,
+        breed: data.pet.breed || "",
+        photo_url: data.pet.photo_url || "",
+        photo_path: pet.photo_path,
+        created_at: data.pet.created_at,
+      });
+      setSaveMessage(`Saved to Supabase as ${data.pet.petluma_id}.`);
+    } catch (saveError) {
+      console.error("[PetLuma] Create Card save error", saveError);
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : "Could not save this pet. Please try again.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
   return (
-    <div className="grid w-full gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(21rem,1.05fr)] lg:items-start">
+    <div className="grid w-full gap-10 lg:grid-cols-[minmax(17rem,0.68fr)_minmax(0,1.32fr)] lg:items-start">
       <form
-        onSubmit={(event) => event.preventDefault()}
-        className="rounded-[2rem] border border-white/70 bg-white/58 p-5 shadow-soft backdrop-blur sm:p-7"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void handleSave();
+        }}
+        className="rounded-[2.2rem] border border-espresso/10 bg-[#fbf8f3]/70 p-6 shadow-soft backdrop-blur sm:p-8"
       >
-        <div className="mb-6">
-          <p className="text-xs font-bold uppercase tracking-[0.26em] text-espresso/45">
-            Create ID
+        <div className="mb-8">
+          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.36em] text-espresso/42">
+            Companion Details
           </p>
-          <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-espresso">
-            Pet details
+          <h2 className="mt-3 font-serif text-4xl font-medium leading-none tracking-[-0.04em] text-espresso">
+            Keep it essential.
           </h2>
+          <p className="mt-4 text-sm leading-6 text-espresso/55">
+            A luxury membership card works best with restraint: name, breed,
+            image, and identity number.
+          </p>
         </div>
 
-        <div className="grid gap-4">
+        <div className="grid gap-5">
           <TextField
             name="petName"
             label="Pet Name"
@@ -127,58 +196,20 @@ export function CreatePetForm() {
             onChange={(value) => updatePet("breed", value)}
           />
 
-          <label className="grid gap-2">
-            <span className="text-sm font-bold text-espresso">Birthday</span>
-            <input
-              name="birthday"
-              type="date"
-              max={maxBirthday}
-              value={pet.birthday}
-              onChange={(event) => updatePet("birthday", event.target.value)}
-              className="h-[3.35rem] rounded-2xl border border-espresso/10 bg-cream/70 px-4 text-espresso outline-none transition focus:border-amber focus:ring-4 focus:ring-amber/15"
-            />
-          </label>
-
-          <label className="grid gap-2">
-            <span className="text-sm font-bold text-espresso">Personality</span>
-            <select
-              name="personality"
-              value={pet.personality}
-              onChange={(event) =>
-                updatePet("personality", event.target.value)
-              }
-              className="h-[3.35rem] rounded-2xl border border-espresso/10 bg-cream/70 px-4 text-espresso outline-none transition focus:border-amber focus:ring-4 focus:ring-amber/15"
-            >
-              {personalities.map((personality) => (
-                <option key={personality} value={personality}>
-                  {personality}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <TextField
-            name="favoriteSnack"
-            label="Favorite Snack"
-            placeholder="Chicken bites"
-            value={pet.favorite_snack}
-            onChange={(value) => updatePet("favorite_snack", value)}
-          />
-
           <label className="group grid cursor-pointer gap-2">
-            <span className="text-sm font-bold text-espresso">
-              Upload Pet Photo
+            <span className="text-[0.66rem] font-semibold uppercase tracking-[0.22em] text-espresso/58">
+              Pet Photography
             </span>
-            <span className="flex min-h-24 items-center gap-4 rounded-3xl border border-dashed border-espresso/18 bg-cream/70 p-4 transition group-hover:border-amber">
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blush text-espresso">
+            <span className="flex min-h-28 items-center gap-4 rounded-[1.6rem] border border-dashed border-espresso/18 bg-cream/80 p-4 transition duration-300 group-hover:-translate-y-0.5 group-hover:border-amber/70 group-hover:bg-white/70">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-amber/30 bg-espresso text-amber">
                 <ImagePlus className="h-6 w-6" />
               </span>
               <span className="min-w-0">
-                <span className="block truncate text-sm font-bold text-espresso">
+                <span className="block truncate text-sm font-semibold text-espresso">
                   {photoName || "Choose a JPG, PNG, or WebP"}
                 </span>
                 <span className="mt-1 block text-xs text-espresso/55">
-                  The preview updates instantly. Square photos look best.
+                  Golden-hour, outdoor, or soft natural light photos work best.
                 </span>
               </span>
             </span>
@@ -197,9 +228,23 @@ export function CreatePetForm() {
             {error}
           </p>
         ) : null}
+
+        {saveMessage ? (
+          <p className="mt-5 rounded-2xl bg-sage/15 px-4 py-3 text-sm font-semibold text-espresso/70">
+            {saveMessage}
+          </p>
+        ) : null}
+
+        <PrimaryButton
+          type="submit"
+          disabled={isSaving}
+          className="mt-7 w-full"
+        >
+          {isSaving ? "Saving..." : "Create Card"}
+        </PrimaryButton>
       </form>
 
-      <div className="min-w-0 lg:sticky lg:top-8">
+      <div className="min-w-0 rounded-[2.6rem] border border-white/60 bg-[#eee6dc]/55 p-3 shadow-soft lg:sticky lg:top-8">
         <PetIdCard pet={pet} />
       </div>
     </div>
@@ -221,14 +266,16 @@ function TextField({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="text-sm font-bold text-espresso">{label}</span>
+      <span className="text-[0.66rem] font-semibold uppercase tracking-[0.22em] text-espresso/58">
+        {label}
+      </span>
       <input
         name={name}
         maxLength={100}
         placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-[3.35rem] rounded-2xl border border-espresso/10 bg-cream/70 px-4 text-espresso outline-none transition placeholder:text-espresso/35 focus:border-amber focus:ring-4 focus:ring-amber/15"
+        className="h-[3.65rem] rounded-[1.35rem] border border-espresso/10 bg-cream/80 px-4 text-sm text-espresso outline-none transition duration-300 placeholder:text-espresso/30 focus:border-amber/70 focus:bg-white/72 focus:ring-4 focus:ring-amber/15"
       />
     </label>
   );

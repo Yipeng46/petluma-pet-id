@@ -1,22 +1,23 @@
-import { ShieldCheck } from "lucide-react";
 import { CreatePetForm } from "@/components/create-pet-form";
 import { SiteShell } from "@/components/site-shell";
 
 export default function CreatePage() {
   return (
     <SiteShell>
-      <section className="grid gap-8 pb-12">
-        <div className="max-w-2xl pt-2">
-          <div className="inline-flex items-center gap-2 rounded-full border border-espresso/10 bg-white/45 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-espresso/65">
-            <ShieldCheck className="h-4 w-4 text-amber" />
-            No login required
+      <section className="grid gap-12 pb-16">
+        <div className="grid gap-7 pt-2 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
+          <div>
+            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.48em] text-espresso/42">
+              Create Companion Card
+            </p>
+            <h1 className="mt-6 max-w-xl font-serif text-5xl font-medium leading-[0.9] tracking-[-0.06em] text-espresso sm:text-7xl">
+              A quiet identity for a beloved companion.
+            </h1>
           </div>
-          <h1 className="mt-6 font-serif text-4xl font-semibold leading-tight tracking-tight text-espresso sm:text-6xl">
-            Tell us about your best friend.
-          </h1>
-          <p className="mt-4 text-base leading-7 text-espresso/68">
-            Add a favorite photo and a few details. PetLuma will create a
-            polished digital card you can download or share right away.
+          <p className="max-w-xl text-base leading-8 tracking-[-0.01em] text-espresso/60 lg:justify-self-end">
+            Add one editorial-style photo and two essential details. PetLuma
+            turns them into a warm, premium companion card you can download
+            locally as a high-resolution PNG.
           </p>
         </div>
         <CreatePetForm />

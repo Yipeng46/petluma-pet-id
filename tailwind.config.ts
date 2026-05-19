@@ -9,19 +9,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#F9F7F4",
-        espresso: "#3A271E",
-        blush: "#E9D7D7",
-        sage: "#CBD3B8",
-        amber: "#E6A94A",
+        cream: "#F7F3EE",
+        espresso: "#241812",
+        blush: "#EDE4D9",
+        sage: "#7C8B72",
+        amber: "#D8A25E",
+        stone: "#D4D0CA",
       },
       boxShadow: {
-        soft: "0 24px 80px rgba(58, 39, 30, 0.12)",
-        card: "0 18px 45px rgba(58, 39, 30, 0.16)",
+        soft: "0 28px 90px rgba(36, 24, 18, 0.10)",
+        card: "0 22px 55px rgba(36, 24, 18, 0.18)",
       },
       fontFamily: {
-        sans: ["ui-sans-serif", "system-ui", "sans-serif"],
-        serif: ["Georgia", "serif"],
+        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: ["var(--font-cormorant)", "Georgia", "serif"],
       },
     },
   },

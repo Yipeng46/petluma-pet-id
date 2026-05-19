@@ -1,17 +1,31 @@
 import type { Metadata } from "next";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PetLuma Pet ID",
-  description: "Create a premium digital identity card for your pet.",
+  title: "PetLuma Companion Identity",
+  description: "Create a premium digital companion card for your pet.",
   metadataBase: new URL("http://localhost:3000"),
   openGraph: {
-    title: "PetLuma Pet ID",
-    description: "A digital identity card for your furry family member.",
+    title: "PetLuma Companion Identity",
+    description: "A premium digital companion card for your pet.",
     siteName: "PetLuma",
     type: "website",
   },
 };
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-cormorant",
+  display: "swap",
+});
 
 export default function RootLayout({
   children,
@@ -20,7 +34,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-sans">{children}</body>
+      <body className={`${inter.variable} ${cormorant.variable} font-sans antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }
